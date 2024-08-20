@@ -1,18 +1,50 @@
 package com.example.demo.config;
+import com.example.demo.service.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
-@Entity
+@Configuration
+@EnableWebSecurity
 public class SecurityConfig {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String title;
-    private String author;
-    private String isbn;
 
-    // getters and setters
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(authorizeRequests ->
+                        authorizeRequests
+                                .requestMatchers("/api/menu/**").hasAnyRole("STAFF", "MANAGER")
+                                .requestMatchers("/api/orders/**").hasRole("STAFF")
+                                .requestMatchers("/api/tables/**").hasRole("STAFF")
+                                .requestMatchers("/api/inventory/**").hasRole("MANAGER")
+                                .requestMatchers("/api/reports/**").hasRole("MANAGER")
+                                .anyRequest().authenticated()
+                )
+                .formLogin(formLogin ->
+                        formLogin
+                                .loginPage("/login")
+                                .permitAll()
+                )
+                .logout(LogoutConfigurer::permitAll
+                )
+                .userDetailsService(userDetailsService);
+        return http.build();
+    }
+
 }
