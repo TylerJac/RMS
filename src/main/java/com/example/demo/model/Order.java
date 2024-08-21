@@ -1,7 +1,8 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-        import lombok.Data;
+import jakarta.persistence.Table;
+import lombok.Data;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ import java.util.List;
  */
 @Entity
 @Data
+@Table(name="orders")
 public class Order {
 
     @Id
@@ -17,7 +19,7 @@ public class Order {
     private Long id;
 
     // List of item names ordered by the customer
-    @ElementCollection
+    @Column
     private List<String> items;
 
     // Total price of the order
