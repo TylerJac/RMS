@@ -35,17 +35,25 @@ public class SecurityConfig {
                                 .requestMatchers("/api/tables/**").hasRole("STAFF")
                                 .requestMatchers("/api/inventory/**").hasRole("MANAGER")
                                 .requestMatchers("/api/reports/**").hasRole("MANAGER")
+                                .requestMatchers("/", "/login", "/error", "/css/**", "/js/**").permitAll() // Public pages
                                 .anyRequest().authenticated()
                 )
                 .formLogin(formLogin ->
                         formLogin
                                 .loginPage("/login")
+                                .defaultSuccessUrl("/dashboard", true) // Redirect to dashboard on successful login
                                 .permitAll()
                 )
-                .logout(LogoutConfigurer::permitAll
+                .logout(logout ->
+                        logout
+                                .logoutUrl("/logout")
+                                .logoutSuccessUrl("/login?logout")
+                                .invalidateHttpSession(true)
+                                .deleteCookies("JSESSIONID")
+                                .permitAll()
                 )
                 .userDetailsService(userDetailsService);
+
         return http.build();
     }
-
 }
