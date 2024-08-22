@@ -28,11 +28,13 @@ public class UserController {
 
     @PostMapping("/register")
     public String registerUser(@ModelAttribute("user") User user, @ModelAttribute("role") String roleName) {
-        Set<Role> roles = new HashSet<>();
+        // Simplified role assignment using UserService's role management
         Role role = userService.getRoles().stream()
                 .filter(r -> r.getName().equals(roleName))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Invalid role: " + roleName));
+
+        Set<Role> roles = new HashSet<>();
         roles.add(role);
 
         userService.saveUser(user, roles);

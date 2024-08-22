@@ -4,6 +4,7 @@ import com.example.demo.model.Role;
 import com.example.demo.model.User;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,19 @@ public class UserService {
     @Autowired
     private RoleRepository roleRepository;
 
+    @PostConstruct
+    public void initRoles() {
+        Set<String> roleNames = new HashSet<>();
+        roleNames.add("ADMIN");
+        roleNames.add("STAFF");
+
+        for (String roleName : roleNames) {
+            if (roleRepository.findByName(roleName).isEmpty()) {
+                roleRepository.save(new Role(roleName));
+            }
+        }
+    }
+
     public void saveUser(User user, Set<Role> roles) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(roles);
@@ -38,3 +52,4 @@ public class UserService {
         return new HashSet<>(roleRepository.findAll());
     }
 }
+

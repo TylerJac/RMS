@@ -31,11 +31,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/", "/login", "/register", "/error", "/css/**", "/js/**").permitAll() // Public pages
-                                .requestMatchers("/api/menu/**").hasAnyRole("STAFF", "ADMIN")
-                                .requestMatchers("/api/orders/**").hasRole("STAFF")
-                                .requestMatchers("/api/tables/**").hasRole("STAFF")
-                                .requestMatchers("/api/inventory/**").hasRole("ADMIN")
-                                .requestMatchers("/api/reports/**").hasRole("ADMIN")
+                                .requestMatchers("/menu-management").hasAnyRole("STAFF", "ADMIN")
+                                .requestMatchers("/orders-processing").hasRole("STAFF")
+                                .requestMatchers("/table-management").hasRole("STAFF")
+                                .requestMatchers("/inventory-management").hasRole("ADMIN")
+                                .requestMatchers("/sales-report").hasRole("ADMIN")
+                                .requestMatchers("/api/inventory/**").hasRole("ADMIN") // Securing Inventory API
+                                .requestMatchers("/api/orders/**").hasRole("STAFF") // Securing Orders API
+                                .requestMatchers("/tables/**").hasRole("STAFF") // Securing Tables API
                                 .anyRequest().authenticated() // Ensure other requests are authenticated
                 )
                 .formLogin(formLogin ->

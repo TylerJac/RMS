@@ -5,10 +5,78 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Order Processing</title>
   <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
 <h2>Order Processing</h2>
 <p>Here you can process customer orders...</p>
-<!-- Add relevant form and table for orders -->
+
+<!-- Form to create a new order -->
+<form id="newOrderForm">
+  <input type="text" id="orderItems" placeholder="Enter items separated by comma" required>
+  <input type="text" id="totalPrice" placeholder="Total Price" required>
+  <input type="text" id="status" placeholder="Order Status" required>
+  <button type="submit">Place Order</button>
+</form>
+
+<!-- Table to display orders -->
+<table id="ordersTable">
+  <thead>
+  <tr>
+    <th>Order ID</th>
+    <th>Date</th>
+    <th>Items</th>
+    <th>Total Price</th>
+    <th>Status</th>
+    <th>Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+  <!-- Data filled by JS -->
+  </tbody>
+</table>
+
+<script>
+  $(document).ready(function() {
+    fetchOrders();
+
+    $('#newOrderForm').on('submit', function(e) {
+      e.preventDefault(); // Prevent the default form submission
+      placeOrder();
+    });
+
+    function fetchOrders() {
+      // Implementation remains the same as previous example
+    }
+
+    function placeOrder() {
+      $.ajax({
+        url: '/api/orders',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+          items: $('#orderItems').val().split(','),
+          totalPrice: $('#totalPrice').val(),
+          status: $('#status').val()
+        }),
+        success: function(data) {
+          alert('Order placed successfully');
+          $('#newOrderForm')[0].reset(); // Reset form after submission
+          fetchOrders(); // Refresh the order list
+        },
+        error: function(error) {
+          alert('Failed to place order');
+          console.error('Error:', error);
+        }
+      });
+    }
+
+    // Additional functions for updateStatus and deleteOrder as needed
+  });
+</script>
+
+<footer>
+  <p>Thank you for using our restaurant management app!</p>
+</footer>
 </body>
 </html>

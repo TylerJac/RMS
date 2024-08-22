@@ -21,16 +21,15 @@ public class Role {
     @Column(nullable = false, unique = true)
     private String name;
 
-    public Role() {}
-
-    public Role(String name) {
-        this.name = name;
-    }
 
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
 
-    public boolean isEmpty() {
-        return users == null || users.isEmpty();
+    public Role() {
+        // Default constructor
+    }
+
+    public Role(String name) {
+        this.name = name;
     }
 }

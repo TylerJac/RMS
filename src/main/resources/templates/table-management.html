@@ -9,6 +9,54 @@
 <body>
 <h2>Table Management</h2>
 <p>Manage the status and assignments of tables...</p>
-<!-- Add relevant form and table for table management -->
+
+<!-- Table list -->
+<table border="1">
+    <thead>
+    <tr>
+        <th>Table ID</th>
+        <th>Size</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Iterate through tables -->
+    <tr th:each="table : ${tables}">
+        <td th:text="${table.id}">1</td>
+        <td th:text="${table.size}">4</td>
+        <td th:text="${table.status}">AVAILABLE</td>
+        <td>
+            <form th:action="@{/tables/{id}(id=${table.id})}" method="post">
+                <input type="hidden" name="_method" value="patch"/>
+                <select name="status">
+                    <option th:value="AVAILABLE" th:selected="${table.status == T(com.example.demo.model.RestaurantTable.TableStatus).AVAILABLE}">Available</option>
+                    <option th:value="RESERVED" th:selected="${table.status == T(com.example.demo.model.RestaurantTable.TableStatus).RESERVED}">Reserved</option>
+                    <option th:value="OCCUPIED" th:selected="${table.status == T(com.example.demo.model.RestaurantTable.TableStatus).OCCUPIED}">Occupied</option>
+                </select>
+                <button type="submit">Update</button>
+            </form>
+            <form th:action="@{/tables/assign/{id}(id=${table.id})}" method="post" th:if="${table.status == T(com.example.demo.model.RestaurantTable.TableStatus).AVAILABLE}">
+                <button type="submit">Assign Customer</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Form to add a new table -->
+<h3>Add New Table</h3>
+<form th:action="@{/tables}" method="post">
+    <label for="size">Size:</label>
+    <input type="number" id="size" name="size" required>
+    <label for="status">Status:</label>
+    <select id="status" name="status">
+        <option value="AVAILABLE">Available</option>
+        <option value="RESERVED">Reserved</option>
+        <option value="OCCUPIED">Occupied</option>
+    </select>
+    <button type="submit">Add Table</button>
+</form>
+
 </body>
 </html>

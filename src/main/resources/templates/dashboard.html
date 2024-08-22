@@ -9,11 +9,24 @@
 <body>
 <h2>Dashboard</h2>
 <ul>
-    <li><a href="/menu-management">Menu Management</a></li>
-    <li><a href="/order-processing">Order Processing</a></li>
-    <li><a href="/table-management">Table Management</a></li>
-    <li><a href="/inventory-management">Inventory Management</a></li>
-    <li><a href="/sales-report">Sales Report</a></li>
+    <!-- Menu Management - Accessible to STAFF and ADMIN -->
+    <li th:if="${#authorization.expression('hasRole(''STAFF'') or hasRole(''ADMIN'')')}">
+    <a href="/menu-management">Menu Management</a>
+</li>
+<li th:if="${#authorization.expression('hasRole(''STAFF'')')}">
+    <a href="/orders-processing">Order Processing</a>
+</li>
+<li th:if="${#authorization.expression('hasRole(''STAFF'')')}">
+    <a href="/table-management">Table Management</a>
+</li>
+<li th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+    <a href="/inventory-management">Inventory Management</a>
+</li>
+<li th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+    <a href="/sales-report">Sales Report</a>
+</li>
+    <!-- Logout - Accessible to all authenticated users -->
+    <li><a href="/logout">Logout</a></li>
 </ul>
 </body>
 </html>

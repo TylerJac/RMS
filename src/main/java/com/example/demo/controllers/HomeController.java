@@ -26,7 +26,7 @@ public class HomeController {
         return "menu-management"; // Maps to menu-management.html
     }
 
-    @GetMapping("/orders")
+    @GetMapping("/orders-processing")
     public String orderProcessing() {
         return "orders-processing"; // Maps to order-processing.html
     }
@@ -44,6 +44,11 @@ public class HomeController {
     @GetMapping("/sales-report")
     public String salesReport() {
         return "sales-report"; // Maps to sales-report.html
+    }
+
+    @GetMapping("/logout")
+    public String logout() {
+        return "logout"; // Redirects to the home page
     }
 
     @GetMapping("/error")
