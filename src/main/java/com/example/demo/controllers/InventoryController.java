@@ -5,6 +5,8 @@ import com.example.demo.service.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
         import java.util.List;
@@ -12,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * REST controller for managing inventory items.
  */
-@RestController
+@Controller
 @RequestMapping("/api/inventory")
 public class InventoryController {
 
@@ -23,7 +25,15 @@ public class InventoryController {
      * Retrieves all inventory items.
      * @return List of all inventory items.
      */
+    @GetMapping("/inventory-management")
+    public String showInventoryManagement(Model model) {
+        model.addAttribute("inventoryItem", new InventoryItem()); // Empty object for form binding
+        model.addAttribute("inventoryItems", inventoryService.getAllItems()); // List of all inventory items
+        return "inventory-management"; // This should point to inventory-management.html
+    }
+
     @GetMapping
+    @ResponseBody // Keeps this method as a REST endpoint
     public List<InventoryItem> getAllItems() {
         return inventoryService.getAllItems();
     }
@@ -34,6 +44,7 @@ public class InventoryController {
      * @return ResponseEntity containing the inventory item or a 404 status if not found.
      */
     @GetMapping("/{id}")
+    @ResponseBody // Keeps this method as a REST endpoint
     public ResponseEntity<InventoryItem> getItemById(@PathVariable Long id) {
         InventoryItem item = inventoryService.getItemById(id);
         return item != null ? new ResponseEntity<>(item, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -45,6 +56,7 @@ public class InventoryController {
      * @return ResponseEntity containing the created item and a 201 status.
      */
     @PostMapping
+    @ResponseBody // Keeps this method as a REST endpoint
     public ResponseEntity<InventoryItem> addItem(@RequestBody InventoryItem item) {
         InventoryItem createdItem = inventoryService.addItem(item);
         return new ResponseEntity<>(createdItem, HttpStatus.CREATED);
@@ -57,6 +69,7 @@ public class InventoryController {
      * @return ResponseEntity containing the updated item or a 404 status if not found.
      */
     @PutMapping("/{id}")
+    @ResponseBody // Keeps this method as a REST endpoint
     public ResponseEntity<InventoryItem> updateItem(@PathVariable Long id, @RequestBody InventoryItem updatedItem) {
         InventoryItem item = inventoryService.updateItem(id, updatedItem);
         return item != null ? new ResponseEntity<>(item, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -68,8 +81,10 @@ public class InventoryController {
      * @return ResponseEntity with a 204 status indicating the item was deleted.
      */
     @DeleteMapping("/{id}")
+    @ResponseBody // Keeps this method as a REST endpoint
     public ResponseEntity<Void> deleteItem(@PathVariable Long id) {
         inventoryService.deleteItem(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 }

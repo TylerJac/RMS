@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
+import com.example.demo.model.MenuItem;
 import com.example.demo.model.OrderItem;
 import com.example.demo.model.Order;
+import com.example.demo.repository.MenuItemRepository;
 import com.example.demo.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -24,6 +26,8 @@ public class OrderService {
     @Autowired
     private InventoryService inventoryService;
 
+    @Autowired
+    private MenuItemRepository menuItemRepository;
     /**
      * Retrieves all orders from the database.
      *
@@ -109,9 +113,19 @@ public class OrderService {
      *
      */
     private double calculateItemPrice(OrderItem item) {
-        // Replace with actual price lookup logic
-        return 10.0;
+        Long menuItemId = item.getId();
+        if (menuItemId != null) {
+            Optional<MenuItem> menuItem = menuItemRepository.findById(menuItemId);
+            if (menuItem.isPresent()) {
+                return menuItem.get().getPrice();
+            } else {
+                throw new IllegalArgumentException("No menu item found with ID: " + menuItemId);
+            }
+        } else {
+            throw new IllegalStateException("Order item does not have a linked menu item.");
+        }
     }
+
     /**
      * Calculates the total price of the order based on the items ordered.
      *

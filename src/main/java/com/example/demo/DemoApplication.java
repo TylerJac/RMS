@@ -23,17 +23,17 @@ public class DemoApplication {
     /**
      * Add inventory to database everytime this code runs.     *
      */
-//    @Bean
-//    public CommandLineRunner loadData() {
-//        return args -> {
-//            //Add initial inventory items
+    @Bean
+    public CommandLineRunner loadData() {
+        return args -> {
+            //Add initial inventory items
 //            addInventoryItem("Coffee", 40_000, "ounces");
 //            addInventoryItem("Blueberry Muffins", 1500, "each");
 //            addInventoryItem("Chocolate Chip Muffins", 1500, "each");
 //            addInventoryItem("Black Tea", 40_000, "ounces");
-//
-//        };
-//    }
+
+        };
+    }
 
     private void addInventoryItem(String name, int quantity, String unit) {
         InventoryItem item = new InventoryItem();

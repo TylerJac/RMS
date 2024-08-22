@@ -9,6 +9,27 @@
 <body>
 <h2>Inventory Management</h2>
 <p>Manage inventory and track ingredient levels...</p>
-<!-- Add relevant form and table for inventory management -->
+
+<!-- Table to Display Inventory Items -->
+<h3>Current Inventory</h3>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Quantity</th>
+        <th>Unit</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${inventory_Items}">
+        <td th:text="${item.id}">ID</td>
+        <td th:text="${item.name}">Name</td>
+        <td th:text="${item.quantity}">Quantity</td>
+        <td th:text="${item.unit}">Unit</td>
+    </tr>
+    </tbody>
+</table>
+
 </body>
 </html>
