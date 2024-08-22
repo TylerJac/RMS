@@ -1,16 +1,16 @@
 package com.example.demo.model;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
-import javax.persistence.Table;
+
 import java.util.Set;
 
 @Setter
 @Getter
-@Entity
-@Table(name = "users")
+@jakarta.persistence.Entity
+@jakarta.persistence.Table(name = "users")
 public class User {
 
     @Id
@@ -22,6 +22,9 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    private Boolean enabled = true;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

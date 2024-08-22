@@ -1,10 +1,11 @@
 package com.example.demo.model;
 
+import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
-import javax.persistence.Table;
+
 import java.util.Set;
 
 @Setter
@@ -28,4 +29,8 @@ public class Role {
 
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
+
+    public boolean isEmpty() {
+        return users == null || users.isEmpty();
+    }
 }
