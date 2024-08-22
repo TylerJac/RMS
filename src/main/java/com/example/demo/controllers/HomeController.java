@@ -26,7 +26,7 @@ public class HomeController {
         return "menu-management"; // Maps to menu-management.html
     }
 
-    @GetMapping("/order-processing")
+    @GetMapping("/orders")
     public String orderProcessing() {
         return "orders-processing"; // Maps to order-processing.html
     }
