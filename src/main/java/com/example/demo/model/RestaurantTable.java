@@ -37,6 +37,10 @@ public class RestaurantTable {
         this.status = status;
     }
 
+    public String getName() {
+    return null;
+    }
+
     // Nested enum for table status
     public enum TableStatus {
         AVAILABLE,
