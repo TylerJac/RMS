@@ -8,7 +8,7 @@
 </head>
 <body>
 <h2>Inventory Management</h2>
-<p>Manage inventory and track ingredient levels...</p>
+<p>Current Inventory Items in the Database</p>
 
 <h3>Inventory Items</h3>
 <table>
@@ -27,7 +27,7 @@
         <td th:text="${item.name}">Name</td>
         <td th:text="${item.quantity}">Quantity</td>
         <td th:text="${item.unit}">Unit</td>
-        <td th:text="${item.quantity < 10 ? 'Low' : 'Sufficient'}">Status</td>
+        <td th:text="${item.quantity < 10} ? 'Low' : 'Sufficient'">Status</td>
     </tr>
     </tbody>
 </table>

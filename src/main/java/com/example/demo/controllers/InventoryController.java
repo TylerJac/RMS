@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
  * REST controller for managing inventory items.
  */
 @Controller
-@RequestMapping("/api/inventory")
+@RequestMapping("/api/inventory-management")
 public class InventoryController {
 
     @Autowired
@@ -25,7 +25,7 @@ public class InventoryController {
      * Retrieves all inventory items.
      * @return List of all inventory items.
      */
-    @GetMapping("/inventory-management")
+    @GetMapping
     public String showInventoryManagement(Model model) {
         List<InventoryItem> inventoryItems = inventoryService.getAllItems();
         model.addAttribute("inventoryItems", inventoryItems);
@@ -33,11 +33,11 @@ public class InventoryController {
     }
 
 
-    @GetMapping
-    @ResponseBody // Keeps this method as a REST endpoint
-    public List<InventoryItem> getAllItems() {
-        return inventoryService.getAllItems();
-    }
+//    @GetMapping
+//    @ResponseBody // Keeps this method as a REST endpoint
+//    public List<InventoryItem> getAllItems() {
+//        return inventoryService.getAllItems();
+//    }
 
     /**
      * Retrieves a specific inventory item by its ID.
