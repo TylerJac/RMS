@@ -8,7 +8,31 @@
 </head>
 <body>
 <h2>Sales Report</h2>
-<p>View and export daily sales reports...</p>
-<!-- Add relevant table and export button for sales reports -->
+
+<div th:if="${salesReport != null}">
+  <!-- Display sales report details -->
+  <h3>Daily Sales Report</h3>
+  <table>
+    <tr>
+      <th>Date</th>
+      <td th:text="${salesReport.date}">Date</td>
+    </tr>
+    <tr>
+      <th>Total Revenue</th>
+      <td th:text="${salesReport.totalRevenue}">Total Revenue</td>
+    </tr>
+    <!-- Other fields... -->
+  </table>
+
+  <!-- Export button -->
+  <form th:action="@{/api/sales-report/export}" method="get">
+    <button type="submit">Export Sales Report</button>
+  </form>
+</div>
+
+<div th:if="${salesReport == null}">
+  <p>No sales report data is available for today.</p>
+</div>
+
 </body>
 </html>

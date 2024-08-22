@@ -1,13 +1,17 @@
 package com.example.demo.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
+
 
 import java.io.Serializable;
 import java.util.List;
 
 @Setter
 @Getter
+@Entity
 public class MenuItem implements Serializable {
 
     private String itemName;
@@ -15,6 +19,10 @@ public class MenuItem implements Serializable {
     private int preparationTime; // in minutes
     private double price;
     private List<String> ingredients;
+    @Getter
+    @Setter
+    @Id
+    private Long id;
 
     // Constructors, Getters, and Setters
 
@@ -39,4 +47,5 @@ public class MenuItem implements Serializable {
                 ", ingredients=" + ingredients +
                 '}';
     }
+
 }

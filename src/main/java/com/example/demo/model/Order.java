@@ -11,6 +11,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -57,4 +59,7 @@ public class Order {
     @Column
     private double totalPrice;
 
+    public Collection<Object> getItems() {
+        return Collections.singleton(orderItems);
+    }
 }

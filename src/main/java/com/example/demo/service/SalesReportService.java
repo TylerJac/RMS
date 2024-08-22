@@ -33,8 +33,8 @@ public class SalesReportService {
 
         // Calculate most popular items
         Map<String, Long> itemFrequency = orders.stream()
-                .flatMap(order -> order.getItem().stream())
-                .collect(Collectors.groupingBy(item -> item, Collectors.counting()));
+                .flatMap(order -> order.getItems().stream())
+                .collect(Collectors.groupingBy(Object::toString, Collectors.counting()));
 
         String mostPopularItem = itemFrequency.entrySet().stream()
                 .max(Map.Entry.comparingByValue())
