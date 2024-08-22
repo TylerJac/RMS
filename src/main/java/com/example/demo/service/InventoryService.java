@@ -97,4 +97,14 @@ public class InventoryService {
             }
         });
     }
+    public void alertIfLow(String itemName) {
+        Optional<InventoryItem> item = inventoryRepository.findByName(itemName);
+        item.ifPresent(i -> {
+            if (i.getQuantity() < 10) { // Assuming the threshold for "low" is 10 units
+                // Implement your alerting logic here. It could be an email, a log entry, etc.
+                System.out.println("Alert: " + itemName + " is running low!");
+            }
+        });
+    }
+
 }

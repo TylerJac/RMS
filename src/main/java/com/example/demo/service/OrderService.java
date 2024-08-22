@@ -75,6 +75,7 @@ public class OrderService {
 
             //Update inventory quantities based on the items ordered
             inventoryService.updateItemQuantity(item.getItemName(), item.getQuantity());
+            inventoryService.alertIfLow(item.getItemName());
         }
         order.setTotalPrice(totalPrice);
 

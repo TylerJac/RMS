@@ -27,10 +27,11 @@ public class InventoryController {
      */
     @GetMapping("/inventory-management")
     public String showInventoryManagement(Model model) {
-        model.addAttribute("inventoryItem", new InventoryItem()); // Empty object for form binding
-        model.addAttribute("inventoryItems", inventoryService.getAllItems()); // List of all inventory items
-        return "inventory-management"; // This should point to inventory-management.html
+        List<InventoryItem> inventoryItems = inventoryService.getAllItems();
+        model.addAttribute("inventoryItems", inventoryItems);
+        return "inventory-management";
     }
+
 
     @GetMapping
     @ResponseBody // Keeps this method as a REST endpoint
