@@ -13,10 +13,8 @@
     <input type="password" id="password" th:field="*{password}" required><br>
 
     <label for="role">Role:</label>
-    <select id="role" th:field="*{role}">
-        <option value="" disabled selected>Select your role</option>
-        <option th:value="'STAFF'" th:text="'STAFF'">STAFF</option>
-        <option th:value="'ADMIN'" th:text="'ADMIN'">ADMIN</option>
+    <select id="role" name="role" required>
+        <option th:each="role : ${roles}" th:value="${role.name}" th:text="${role.name}">Role</option>
     </select><br>
 
     <input type="submit" value="Register">

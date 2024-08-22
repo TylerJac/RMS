@@ -31,11 +31,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/", "/login", "/register", "/error", "/css/**", "/js/**").permitAll() // Public pages
-                                .requestMatchers("/api/menu/**").hasAnyRole("STAFF", "MANAGER")
+                                .requestMatchers("/api/menu/**").hasAnyRole("STAFF", "ADMIN")
                                 .requestMatchers("/api/orders/**").hasRole("STAFF")
                                 .requestMatchers("/api/tables/**").hasRole("STAFF")
-                                .requestMatchers("/api/inventory/**").hasRole("MANAGER")
-                                .requestMatchers("/api/reports/**").hasRole("MANAGER")
+                                .requestMatchers("/api/inventory/**").hasRole("ADMIN")
+                                .requestMatchers("/api/reports/**").hasRole("ADMIN")
+                                .anyRequest().authenticated() // Ensure other requests are authenticated
                 )
                 .formLogin(formLogin ->
                         formLogin

@@ -2,44 +2,40 @@ package com.example.demo.controllers;
 
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
-import com.example.demo.repository.RoleRepository;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @Controller
 public class UserController {
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private UserService userService;
 
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
         model.addAttribute("user", new User());
-        model.addAttribute("roles", roleRepository.findAll());
+        model.addAttribute("roles", userService.getRoles());
         return "register";
     }
 
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute User user, @ModelAttribute("role") String roleName) {
-        Role selectedRole = roleRepository.findByName(roleName);
-        user.setRoles(Collections.singleton(selectedRole));  // Assign the selected role to the user
-        user.setPassword(passwordEncoder.encode(user.getPassword()));  // Encode the password
-        user.setEnabled(true);
-        userRepository.save(user);
-        return "redirect:/login";  // Redirect to the login page after registration
+    public String registerUser(@ModelAttribute("user") User user, @ModelAttribute("role") String roleName) {
+        Set<Role> roles = new HashSet<>();
+        Role role = userService.getRoles().stream()
+                .filter(r -> r.getName().equals(roleName))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Invalid role: " + roleName));
+        roles.add(role);
+
+        userService.saveUser(user, roles);
+        return "redirect:/login?registered";
     }
 }

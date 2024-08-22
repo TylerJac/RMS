@@ -8,8 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserService {
@@ -23,21 +24,17 @@ public class UserService {
     @Autowired
     private RoleRepository roleRepository;
 
-    public void saveUser(User user, String roleName) {
-        // Encode the password
+    public void saveUser(User user, Set<Role> roles) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        // Fetch the role from the database
-        Role role = roleRepository.findByName(roleName);
-
-        // Assign the role to the user
-        user.setRoles(Collections.singleton(role));
-
-        // Save the user to the repository
+        user.setRoles(roles);
         userRepository.save(user);
     }
 
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    public Set<Role> getRoles() {
+        return new HashSet<>(roleRepository.findAll());
     }
 }
