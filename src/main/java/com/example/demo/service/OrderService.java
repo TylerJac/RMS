@@ -1,7 +1,11 @@
 package com.example.demo.service;
 
+import com.example.demo.model.OrderItem;
 import com.example.demo.model.Order;
 import com.example.demo.repository.OrderRepository;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,13 +49,30 @@ public class OrderService {
      * @param order The order to place.
      * @return The placed order.
      */
+    @Valid
+    @NotNull
+    @Transactional
     public Order placeOrder(Order order) {
         order.setStatus("Waiting");
-        double totalPrice = calculateTotalPrice(order.getItems());
-        order.setTotalPrice(totalPrice);
 
-        // Update inventory quantities based on the items ordered
-        order.getItems().forEach(item -> inventoryService.updateItemQuantity(item, 1));
+        // Check if all items in the order are available in sufficient quantity
+        for (OrderItem item : order.getOrderItems()) {
+            if (!inventoryService.isItemAvailable(item.getItemName(), item.getQuantity())) {
+                // Handle insufficient inventory (could throw an exception or return a specific response)
+                throw new IllegalStateException("Insufficient inventory for item: " + item.getItemName());
+            }
+        }
+
+        double totalPrice = 0.0;
+        for (OrderItem item : order.getOrderItems()) {
+            double itemPrice = calculateItemPrice(item);
+            item.setPrice(itemPrice);
+            totalPrice += itemPrice * item.getQuantity();
+
+            //Update inventory quantities based on the items ordered
+            inventoryService.updateItemQuantity(item.getItemName(), item.getQuantity());
+        }
+        order.setTotalPrice(totalPrice);
 
         return orderRepository.save(order);
     }
@@ -83,6 +104,14 @@ public class OrderService {
         orderRepository.deleteById(id);
     }
 
+    /**
+     * Calculate item price by fetching data from menu... reconfigure when available
+     *
+     */
+    private double calculateItemPrice(OrderItem item) {
+        // Replace with actual price lookup logic
+        return 10.0;
+    }
     /**
      * Calculates the total price of the order based on the items ordered.
      *
