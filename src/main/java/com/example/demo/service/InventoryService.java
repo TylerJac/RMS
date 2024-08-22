@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
 /**
  * Service class for managing inventory-related business logic.
  */
@@ -71,6 +70,16 @@ public class InventoryService {
     }
 
     /**
+     * Method used when placing an order to ensure the requests are in stock
+     * @param itemName name of requested order
+     * @param requiredQuantity amount of requested order
+     * @return true if available, false if not in stock or not enough in stock
+     */
+    public boolean isItemAvailable(String itemName, int requiredQuantity) {
+        Optional<InventoryItem> item = inventoryRepository.findByName(itemName);
+        return item.isPresent() && item.get().getQuantity() >= requiredQuantity;
+    }
+    /**
      * Updates the quantity of an inventory item based on usage.
      * @param itemName Name of the inventory item.
      * @param quantityUsed Quantity of the item used.
@@ -78,8 +87,14 @@ public class InventoryService {
     public void updateItemQuantity(String itemName, int quantityUsed) {
         Optional<InventoryItem> item = inventoryRepository.findByName(itemName);
         item.ifPresent(i -> {
-            i.setQuantity(i.getQuantity() - quantityUsed);
-            inventoryRepository.save(i);
+            int updatedQuantity = i.getQuantity() - quantityUsed;
+            if (updatedQuantity >= 0) {
+                i.setQuantity(updatedQuantity);
+                inventoryRepository.save(i);
+            } else {
+                // Handle negative inventory (could throw an exception)
+                throw new IllegalStateException("Inventory cannot be negative for item: " + itemName);
+            }
         });
     }
 }
