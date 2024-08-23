@@ -65,6 +65,7 @@ public class OrderService {
                 // Handle insufficient inventory (could throw an exception or return a specific response)
                 throw new IllegalStateException("Insufficient inventory for item: " + item.getItemName());
             }
+
         }
 
         double totalPrice = 0.0;

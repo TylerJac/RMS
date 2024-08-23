@@ -31,10 +31,11 @@
                 <input type="hidden" name="_method" value="patch"/>
                 <label>
                     <select name="status">
-                        <option th:value="AVAILABLE" th:selected="${table.status == T(com.example.demo.model.RestaurantTable.TableStatus).AVAILABLE}">Available</option>
-                        <option th:value="RESERVED" th:selected="${table.status == T(com.example.demo.model.RestaurantTable.TableStatus).RESERVED}">Reserved</option>
-                        <option th:value="OCCUPIED" th:selected="${table.status == T(com.example.demo.model.RestaurantTable.TableStatus).OCCUPIED}">Occupied</option>
+                        <option th:value="AVAILABLE" th:selected="${table.status.name() == 'AVAILABLE'}">Available</option>
+                        <option th:value="RESERVED" th:selected="${table.status.name() == 'RESERVED'}">Reserved</option>
+                        <option th:value="OCCUPIED" th:selected="${table.status.name() == 'OCCUPIED'}">Occupied</option>
                     </select>
+
                 </label>
                 <button type="submit">Update</button>
             </form>
