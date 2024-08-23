@@ -36,15 +36,16 @@ public class TableControllerTest {
         RestaurantTable table2 = new RestaurantTable(6, RestaurantTable.TableStatus.RESERVED);
         List<RestaurantTable> tables = Arrays.asList(table1, table2);
 
-        when(tableService.getAllTables()).thenReturn(tables);
+        when(TableService.getAllTables()).thenReturn(tables);
 
         // Act
-        List<RestaurantTable> result = tableController.getAllTables();
+        List<RestaurantTable> result = TableService.getAllTables();
 
         // Assert
         assertEquals(2, result.size());
-        assertEquals(RestaurantTable.TableStatus.AVAILABLE, result.get(0).getStatus());
-        verify(tableService, times(1)).getAllTables();
+        assertEquals(RestaurantTable.TableStatus.AVAILABLE, result.getFirst().getStatus());
+        verify(tableService, times(1));
+        TableService.getAllTables();
     }
 
 
