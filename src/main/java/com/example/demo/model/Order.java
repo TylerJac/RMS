@@ -21,7 +21,7 @@ import java.util.List;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Data
-@Table(name="orders")
+@Table(name = "orders")
 @Getter
 @Setter
 public class Order {
@@ -30,21 +30,9 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // List of OrderItems associated with this order
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    /**
-     * Calculates the total price of the order based on the order items.
-     * @return total price of all items in the order.
-     */
-    public double calculateTotalPrice() {
-        return orderItems.stream()
-                .mapToDouble(item -> item.getPrice() * item.getQuantity())
-                .sum();
-    }
-
-    // Audit fields
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdDate;
@@ -52,14 +40,21 @@ public class Order {
     @LastModifiedDate
     private LocalDateTime modifiedDate;
 
-
-    // Current status of the order (e.g., "Waiting", "Preparing", "Ready")
-    private String status;
+    @Column
+    private String status; // Waiting, Preparing, Ready
 
     @Column
     private double totalPrice;
 
-    public Collection<Object> getItems() {
-        return Collections.singleton(orderItems);
+    public double calculateTotalPrice() {
+        return orderItems.stream()
+                .mapToDouble(item -> item.getPrice() * item.getQuantity())
+                .sum();
+    }
+
+    public void updateStatus(String newStatus) {
+        this.status = newStatus;
+        this.modifiedDate = LocalDateTime.now();
     }
 }
+

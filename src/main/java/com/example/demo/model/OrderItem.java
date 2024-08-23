@@ -5,14 +5,12 @@ import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-
-@Data
+@Setter
+@Getter
 @Entity
 @Table(name = "order_items")
 public class OrderItem {
-    // Constructors, getters, and setters
-    @Setter
-    @Getter
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,20 +26,19 @@ public class OrderItem {
     @Column(nullable = false)
     private String itemName;
 
-    @Getter
     @Column(nullable = false)
     private int quantity;
 
-    @Getter
     @Column(nullable = false)
     private double price;
 
-    public OrderItem(String itemName) {
+    public OrderItem() {}
+
+    public OrderItem(String itemName, int quantity, double price) {
         this.itemName = itemName;
-    }
-
-    public OrderItem() {
-
+        this.quantity = quantity;
+        this.price = price;
     }
 }
+
 

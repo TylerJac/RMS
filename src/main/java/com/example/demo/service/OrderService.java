@@ -30,96 +30,56 @@ public class OrderService {
     @Autowired
     private MenuItemRepository menuItemRepository;
 
-    /**
-     * Retrieves all orders from the database.
-     *
-     * @return List of all orders.
-     */
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }
 
-    /**
-     * Retrieves a specific order by its ID.
-     *
-     * @param id ID of the order.
-     * @return The order if found, otherwise null.
-     */
     public Order getOrderById(Long id) {
         return orderRepository.findById(id).orElse(null);
     }
 
-    /**
-     * Places a new order and updates the inventory accordingly.
-     *
-     * @param order The order to place.
-     * @return The placed order.
-     */
-    @Valid
-    @NotNull
     @Transactional
     public Order placeOrder(Order order) {
         order.setStatus("Waiting");
 
-        // Create a new list to hold the items that pass the inventory check
-        List<OrderItem> availableItems = new ArrayList<>();
-
-        // Check if all items in the order are available in sufficient quantity
+        List<OrderItem> insufficientItems = new ArrayList<>();
         for (OrderItem item : order.getOrderItems()) {
-            if (inventoryService.isItemAvailable(item.getItemName(), item.getQuantity())) {
-                availableItems.add(item);
-            } else {
-                // Handle insufficient inventory (could throw an exception or return a specific response)
-                throw new IllegalStateException("Insufficient inventory for item: " + item.getItemName());
+            if (!inventoryService.isItemAvailable(item.getItemName(), item.getQuantity())) {
+                insufficientItems.add(item);
             }
         }
 
+        if (!insufficientItems.isEmpty()) {
+            throw new IllegalStateException("Insufficient inventory for items: " + insufficientItems);
+        }
+
         double totalPrice = 0.0;
-        for (OrderItem item : availableItems) {
+        for (OrderItem item : order.getOrderItems()) {
             double itemPrice = calculateItemPrice(item);
             item.setPrice(itemPrice);
             totalPrice += itemPrice * item.getQuantity();
-
-            // Update inventory quantities based on the items ordered
             inventoryService.updateItemQuantity(item.getItemName(), item.getQuantity());
             inventoryService.alertIfLow(item.getItemName());
         }
-        order.setTotalPrice(totalPrice);
 
+        order.setTotalPrice(totalPrice);
         return orderRepository.save(order);
     }
 
-    /**
-     * Updates the status of an existing order.
-     *
-     * @param id     ID of the order to update.
-     * @param status New status of the order.
-     * @return The updated order, or null if not found.
-     */
     public Order updateOrderStatus(Long id, String status) {
         Optional<Order> existingOrder = orderRepository.findById(id);
         if (existingOrder.isPresent()) {
             Order order = existingOrder.get();
-            order.setStatus(status);
+            order.updateStatus(status);
             return orderRepository.save(order);
-        } else {
-            return null;
         }
+        return null;
     }
 
-    /**
-     * Deletes an order by its ID.
-     *
-     * @param id ID of the order to delete.
-     */
     public void deleteOrder(Long id) {
         orderRepository.deleteById(id);
     }
 
-    /**
-     * Calculate item price by fetching data from menu.
-     *
-     */
     private double calculateItemPrice(OrderItem item) {
         Long menuItemId = item.getId();
         if (menuItemId != null) {
@@ -129,21 +89,8 @@ public class OrderService {
             } else {
                 throw new IllegalArgumentException("No menu item found with ID: " + menuItemId);
             }
-        } else {
-            throw new IllegalStateException("Order item does not have a linked menu item.");
         }
-    }
-
-    /**
-     * Calculates the total price of the order based on the items ordered.
-     *
-     * @param items List of items ordered.
-     * @return Total price of the order.
-     */
-    private double calculateTotalPrice(List<String> items) {
-        // Example logic to calculate total price; assumes each item has a fixed price.
-        // You can modify this method to fetch prices from the menu items.
-        double pricePerItem = 10.0; // Replace with actual logic
-        return items.size() * pricePerItem;
+        throw new IllegalStateException("Order item does not have a linked menu item.");
     }
 }
+
