@@ -5,26 +5,122 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Menu Management</title>
   <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
 <h2>Menu Management</h2>
-<form action="#" th:action="@{/menu/add}" method="post">
+
+<!-- Form to Add a New Menu Item -->
+<h3>Add New Menu Item</h3>
+<form id="addItemForm">
   <label for="itemName">Item Name:</label>
-  <input type="text" id="itemName" name="itemName">
+  <input type="text" id="itemName" name="itemName" required>
   <br>
   <label for="itemDescription">Item Description:</label>
-  <input type="text" id="itemDescription" name="itemDescription">
+  <input type="text" id="itemDescription" name="itemDescription" required>
   <br>
-  <label for="preparationTime">Preparation Time:</label>
-  <input type="text" id="preparationTime" name="preparationTime">
+  <label for="preparationTime">Preparation Time (minutes):</label>
+  <input type="number" id="preparationTime" name="preparationTime" required>
   <br>
   <label for="itemPrice">Item Price:</label>
-  <input type="text" id="itemPrice" name="itemPrice">
+  <input type="number" id="itemPrice" name="itemPrice" step="0.01" required>
   <br>
-  <label for="ingredientsList">Ingredients List:</label>
-  <input type="text" id="ingredientsList" name="ingredientsList">
+  <label for="ingredientsList">Ingredients (comma separated):</label>
+  <input type="text" id="ingredientsList" name="ingredientsList" required>
   <br>
-  <input type="submit" value="Add Item">
+  <button type="button" onclick="addMenuItem()">Add Item</button>
 </form>
+
+<!-- Displaying Menu Items -->
+<h3>Menu Items</h3>
+<table id="menuTable">
+  <thead>
+  <tr>
+    <th>Item Name</th>
+    <th>Description</th>
+    <th>Preparation Time (min)</th>
+    <th>Price</th>
+    <th>Ingredients</th>
+    <th>Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+  <!-- Menu items will be dynamically inserted here -->
+  </tbody>
+</table>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    loadMenuItems();
+  });
+
+  function loadMenuItems() {
+    axios.get('/menu')
+            .then(response => {
+              const items = response.data;
+              const tbody = document.querySelector('#menuTable tbody');
+              tbody.innerHTML = ''; // Clear existing items
+              items.forEach(item => {
+                tbody.innerHTML += `
+            <tr>
+              <td>${item.itemName}</td>
+              <td>${item.itemDescription}</td>
+              <td>${item.preparationTime}</td>
+              <td>${item.price}</td>
+              <td>${item.ingredients.join(', ')}</td>
+              <td>
+                <button onclick="editMenuItem('${item.itemName}')">Edit</button>
+                <button onclick="deleteMenuItem('${item.itemName}')">Delete</button>
+              </td>
+            </tr>
+          `;
+              });
+            })
+            .catch(error => console.error('Error loading menu items:', error));
+  }
+
+  function addMenuItem() {
+    const item = {
+      itemName: document.getElementById('itemName').value,
+      itemDescription: document.getElementById('itemDescription').value,
+      preparationTime: parseInt(document.getElementById('preparationTime').value, 10),
+      price: parseFloat(document.getElementById('itemPrice').value),
+      ingredients: document.getElementById('ingredientsList').value.split(',').map(ingredient => ingredient.trim())
+    };
+
+    axios.post('/menu', item)
+            .then(response => {
+              console.log('Item added:', response.data);
+              loadMenuItems();
+              document.getElementById('addItemForm').reset();
+            })
+            .catch(error => console.error('Error adding item:', error));
+  }
+
+  function deleteMenuItem(itemName) {
+    axios.delete(`/menu/${itemName}`)
+            .then(response => {
+              console.log(response.data);
+              loadMenuItems();
+            })
+            .catch(error => console.error('Error deleting item:', error));
+  }
+
+  function editMenuItem(itemName) {
+    const newItem = prompt('Enter new details in JSON format (e.g., {"itemName":"New Name", "itemDescription":"New Description", "preparationTime":20, "price":10.99, "ingredients":["ingredient1", "ingredient2"]})');
+
+    if (newItem) {
+      const item = JSON.parse(newItem);
+
+      axios.post(`/menu/${itemName}`, item)
+              .then(response => {
+                console.log('Item updated:', response.data);
+                loadMenuItems();
+              })
+              .catch(error => console.error('Error updating item:', error));
+    }
+  }
+</script>
+
 </body>
 </html>
