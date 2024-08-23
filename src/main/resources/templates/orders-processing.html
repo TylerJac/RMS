@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Processing</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<div class="management-container">
+  <h2>Order Processing</h2>
+  <p>Here you can process customer orders...</p>
+
+  <form id="newOrderForm" class="management-form">
+    <label for="orderItems"></label><input type="text" id="orderItems" placeholder="Enter items separated by comma" required>
+    <label for="totalPrice"></label><input type="text" id="totalPrice" placeholder="Total Price" required>
+    <label for="status"></label><input type="text" id="status" placeholder="Order Status" required>
+    <button type="submit">Place Order</button>
+  </form>
+
+  <table id="ordersTable" class="management-table">
+    <thead>
+    <tr>
+      <th>Order ID</th>
+      <th>Date</th>
+      <th>Items</th>
+      <th>Total Price</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Data will be filled by JS -->
+    </tbody>
+  </table>
+
+  <footer>
+    <p>Thank you for using our restaurant management app!</p>
+  </footer>
+</div>
+
+<script>
+  $(document).ready(function() {
+    // Fetch all orders when the page loads
+    fetchOrders();
+
+    // Handle form submission for placing a new order
+    $('#newOrderForm').on('submit', function(e) {
+      e.preventDefault(); // Prevent the default form submission
+      placeOrder();
+    });
+
+    // Function to fetch all orders and display them in the table
+    function fetchOrders() {
+      $.get('/api/orders', function(data) {
+        $('#ordersTable tbody').empty();
+        data.forEach(function(order) {
+          $('#ordersTable tbody').append(`
+            <tr>
+              <td>${order.id}</td>
+              <td>${order.createdDate}</td>
+              <td>${order.orderItems.map(item => item.itemName + ' x ' + item.quantity).join(', ')}</td>
+              <td>${order.totalPrice}</td>
+              <td>${order.status}</td>
+              <td>
+                <button onclick="updateStatus(${order.id}, 'Preparing')">Prepare</button>
+                <button onclick="updateStatus(${order.id}, 'Ready')">Ready</button>
+                <button onclick="deleteOrder(${order.id})">Delete</button>
+              </td>
+            </tr>
+          `);
+        });
+      });
+    }
+
+    // Function to place a new order
+    function placeOrder() {
+      const orderItems = $('#orderItems').val().split(',').map(item => ({
+        itemName: item.trim(),
+        quantity: 1 // Default quantity, can be adjusted
+      }));
+
+      $.post({
+        url: '/api/orders',
+        contentType: 'application/json',
+        data: JSON.stringify({
+          orderItems: orderItems,
+          totalPrice: $('#totalPrice').val(),
+          status: $('#status').val()
+        }),
+        success: function(data) {
+          alert('Order placed successfully');
+          $('#newOrderForm')[0].reset(); // Reset the form after submission
+          fetchOrders(); // Refresh the order list
+        },
+        error: function(error) {
+          alert('Failed to place order');
+          console.error('Error:', error);
+        }
+      });
+    }
+
+    // Function to update the status of an order
+    window.updateStatus = function(orderId, status) {
+      $.post({
+        url: `/api/orders/${orderId}/status`,
+        contentType: 'application/json',
+        data: JSON.stringify(status),
+        success: function(data) {
+          alert('Order status updated to ' + status);
+          fetchOrders(); // Refresh the order list
+        },
+        error: function(error) {
+          alert('Failed to update order status');
+          console.error('Error:', error);
+        }
+      });
+    }
+
+    // Function to delete an order
+    window.deleteOrder = function(orderId) {
+      $.ajax({
+        url: `/api/orders/${orderId}`,
+        type: 'DELETE',
+        success: function() {
+          alert('Order deleted successfully');
+          fetchOrders(); // Refresh the order list
+        },
+        error: function(error) {
+          alert('Failed to delete order');
+          console.error('Error:', error);
+        }
+      });
+    }
+  });
+</script>
+</body>
+</html>
