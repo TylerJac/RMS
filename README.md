@@ -1,1 +1,1 @@
-websites URL: https://localhost:8082
+websites URL: http://localhost:8082
