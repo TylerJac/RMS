@@ -1,25 +1,34 @@
 package com.example.demo.model;
-/**
- * This class is used to add and manipulate items in the inventory database.
- */
-//Use jakarta.persistence for object-relational mapping.
-//This allows us to interact with the SQLite database.
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.Data;
 
-//Each instance of inventory item is an entity in the database
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+
+
 @Entity
-@Data // used to generate getters, setters, toString(), equals(), and hashCode()
+@Data
+@Getter
+@Setter
+@ToString
+@Table(name="inventory_item")
 public class InventoryItem {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) //primary key will be generated automatically
-                                        // using SQLite's auto increment
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
+    @Column(nullable = false)
     private String name;
+
+    @Positive
+    @Column(nullable = false)
     private int quantity;
+
+    @NotBlank
+    @Column(nullable = false)
     private String unit; // e.g., kg, liters, pieces
 }

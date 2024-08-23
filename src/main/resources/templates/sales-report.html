@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sales Report</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<div th:if="${salesReport != null}">
+  <!-- Display sales report details -->
+  <h3>Daily Sales Report</h3>
+  <table>
+    <tr>
+      <th>Date</th>
+      <td th:text="${salesReport.date}">Date</td>
+    </tr>
+    <tr>
+      <th>Total Revenue</th>
+      <td th:text="${salesReport.totalRevenue}">Total Revenue</td>
+    </tr>
+    <!-- Other fields... -->
+  </table>
+
+  <!-- Export button -->
+  <form th:action="@{/api/sales-report/export}" method="get">
+    <button type="submit">Export Sales Report</button>
+  </form>
+</div>
+
+<div th:if="${salesReport == null}">
+  <h1>Reports</h1>
+  <a href="/api/sales-report/view" class="report-link">View Sales Report</a>
+</div>
+
+</body>
+</html>

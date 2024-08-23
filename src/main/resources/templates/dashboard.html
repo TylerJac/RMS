@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div class="dashboard-container">
+    <h2>Dashboard</h2>
+    <div class="dashboard-buttons">
+        <button th:if="${#authorization.expression('hasRole(''STAFF'') or hasRole(''ADMIN'')')}" onclick="location.href='/menu-management'">Menu Management</button>
+        <button th:if="${#authorization.expression('hasRole(''STAFF'')')}" onclick="location.href='/orders-processing'">Order Processing</button>
+        <button th:if="${#authorization.expression('hasRole(''STAFF'')')}" onclick="location.href='/table-management'">Table Management</button>
+        <button th:if="${#authorization.expression('hasRole(''ADMIN'')')}" onclick="location.href='/api/inventory-management'">Inventory Management</button>
+        <button th:if="${#authorization.expression('hasRole(''ADMIN'')')}" onclick="location.href='/sales-report'">Sales Report</button>
+        <button onclick="location.href='/logout'">Logout</button>
+    </div>
+</div>
+</body>
+</html>

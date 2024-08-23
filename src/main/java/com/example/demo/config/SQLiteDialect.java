@@ -111,6 +111,7 @@ import java.sql.Types;
 import java.time.temporal.TemporalAccessor;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 import java.util.TimeZone;
 
 import org.hibernate.ScrollMode;
@@ -124,13 +125,11 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.NationalizationSupport;
 import org.hibernate.dialect.Replacer;
 import org.hibernate.dialect.function.CommonFunctionFactory;
-import org.hibernate.dialect.identity.IdentityColumnSupport;
 import org.hibernate.dialect.pagination.LimitHandler;
 import org.hibernate.dialect.pagination.LimitOffsetLimitHandler;
 import org.hibernate.dialect.unique.AlterTableUniqueDelegate;
 import org.hibernate.dialect.unique.UniqueDelegate;
 import org.hibernate.engine.jdbc.dialect.spi.DialectResolutionInfo;
-import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.exception.DataException;
 import org.hibernate.exception.JDBCConnectionException;
 import org.hibernate.exception.LockAcquisitionException;
@@ -148,16 +147,12 @@ import org.hibernate.query.sqm.TrimSpec;
 import org.hibernate.query.sqm.produce.function.StandardFunctionReturnTypeResolvers;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.sql.ast.SqlAstNodeRenderingMode;
-import org.hibernate.sql.ast.SqlAstTranslator;
-import org.hibernate.sql.ast.SqlAstTranslatorFactory;
 import org.hibernate.sql.ast.spi.SqlAppender;
-import org.hibernate.sql.ast.spi.StandardSqlAstTranslatorFactory;
-import org.hibernate.sql.ast.tree.Statement;
-import org.hibernate.sql.exec.spi.JdbcOperation;
 import org.hibernate.type.BasicType;
 import org.hibernate.type.BasicTypeRegistry;
 import org.hibernate.type.SqlTypes;
 import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.type.descriptor.DateTimeUtils;
 import org.hibernate.type.descriptor.jdbc.BlobJdbcType;
 import org.hibernate.type.descriptor.jdbc.ClobJdbcType;
 import org.hibernate.type.descriptor.jdbc.spi.JdbcTypeRegistry;
@@ -191,7 +186,6 @@ import static org.hibernate.type.descriptor.DateTimeUtils.appendAsDate;
 import static org.hibernate.type.descriptor.DateTimeUtils.appendAsTime;
 import static org.hibernate.type.descriptor.DateTimeUtils.appendAsTimestampWithMillis;
 import static org.hibernate.type.descriptor.DateTimeUtils.appendAsTimestampWithNanos;
-import static org.hibernate.type.descriptor.DateTimeUtils.appendAsTimestampWithMillis;
 
 /**
  * An SQL dialect for SQLite.
@@ -211,7 +205,7 @@ public class SQLiteDialect extends Dialect {
     }
     @Bean
     public DataSource dataSource() {
-        DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
+        DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("org.sqlite.JDBC");
         dataSourceBuilder.url("jdbc:sqlite:restaurant_management.db");
         return dataSourceBuilder.build();
@@ -227,27 +221,17 @@ public class SQLiteDialect extends Dialect {
 
     @Override
     protected String columnType(int sqlTypeCode) {
-        switch ( sqlTypeCode ) {
-            case DECIMAL:
-                return getVersion().isBefore( 3 ) ? columnType( SqlTypes.NUMERIC ) : super.columnType( sqlTypeCode );
-            case CHAR:
-                return getVersion().isBefore( 3 ) ? "char" : super.columnType( sqlTypeCode );
-            case NCHAR:
-                return getVersion().isBefore( 3 ) ? "nchar" : super.columnType( sqlTypeCode );
+        return switch (sqlTypeCode) {
+            case DECIMAL -> getVersion().isBefore(3) ? columnType(SqlTypes.NUMERIC) : super.columnType(sqlTypeCode);
+            case CHAR -> getVersion().isBefore(3) ? "char" : super.columnType(sqlTypeCode);
+            case NCHAR -> getVersion().isBefore(3) ? "nchar" : super.columnType(sqlTypeCode);
             // No precision support
-            case FLOAT:
-                return "float";
-            case TIMESTAMP:
-            case TIMESTAMP_WITH_TIMEZONE:
-                return "timestamp";
-            case TIME_WITH_TIMEZONE:
-                return "time";
-            case BINARY:
-            case VARBINARY:
-                return "blob";
-            default:
-                return super.columnType( sqlTypeCode );
-        }
+            case FLOAT -> "float";
+            case TIMESTAMP, TIMESTAMP_WITH_TIMEZONE -> "timestamp";
+            case TIME_WITH_TIMEZONE -> "time";
+            case BINARY, VARBINARY -> "blob";
+            default -> super.columnType(sqlTypeCode);
+        };
     }
 
     @Override
@@ -292,48 +276,34 @@ public class SQLiteDialect extends Dialect {
      */
     @Override
     public String extractPattern(TemporalUnit unit) {
-        switch ( unit ) {
-            case SECOND:
-                return "cast(strftime('%S.%f',?2) as double)";
-            case MINUTE:
-                return "strftime('%M',?2)";
-            case HOUR:
-                return "strftime('%H',?2)";
-            case DAY:
-            case DAY_OF_MONTH:
-                return "(strftime('%d',?2)+1)";
-            case MONTH:
-                return "strftime('%m',?2)";
-            case YEAR:
-                return "strftime('%Y',?2)";
-            case DAY_OF_WEEK:
-                return "(strftime('%w',?2)+1)";
-            case DAY_OF_YEAR:
-                return "strftime('%j',?2)";
-            case EPOCH:
-                return "strftime('%s',?2)";
-            case WEEK:
+        return switch (unit) {
+            case SECOND -> "cast(strftime('%S.%f',?2) as double)";
+            case MINUTE -> "strftime('%M',?2)";
+            case HOUR -> "strftime('%H',?2)";
+            case DAY, DAY_OF_MONTH -> "(strftime('%d',?2)+1)";
+            case MONTH -> "strftime('%m',?2)";
+            case YEAR -> "strftime('%Y',?2)";
+            case DAY_OF_WEEK -> "(strftime('%w',?2)+1)";
+            case DAY_OF_YEAR -> "strftime('%j',?2)";
+            case EPOCH -> "strftime('%s',?2)";
+            case WEEK ->
                 // Thanks https://stackoverflow.com/questions/15082584/sqlite-return-wrong-week-number-for-2013
-                return "((strftime('%j',date(?2,'-3 days','weekday 4'))-1)/7+1)";
-            default:
-                return super.extractPattern(unit);
-        }
+                    "((strftime('%j',date(?2,'-3 days','weekday 4'))-1)/7+1)";
+            default -> super.extractPattern(unit);
+        };
     }
 
     @Override
     public String timestampaddPattern(TemporalUnit unit, TemporalType temporalType, IntervalType intervalType) {
         final String function = temporalType == TemporalType.DATE ? "date" : "datetime";
-        switch ( unit ) {
-            case NANOSECOND:
-            case NATIVE:
-                return "datetime(?3,'+?2 seconds')";
-            case QUARTER: //quarter is not supported in interval literals
-                return function + "(?3,'+'||(?2*3)||' months')";
-            case WEEK: //week is not supported in interval literals
-                return function + "(?3,'+'||(?2*7)||' days')";
-            default:
-                return function + "(?3,'+?2 ?1s')";
-        }
+        return switch (unit) {
+            case NANOSECOND, NATIVE -> "datetime(?3,'+?2 seconds')";
+            case QUARTER -> //quarter is not supported in interval literals
+                    function + "(?3,'+'||(?2*3)||' months')";
+            case WEEK -> //week is not supported in interval literals
+                    function + "(?3,'+'||(?2*7)||' days')";
+            default -> function + "(?3,'+?2 ?1s')";
+        };
     }
 
     @Override
@@ -372,9 +342,8 @@ public class SQLiteDialect extends Dialect {
                 extractField( pattern, EPOCH, unit );
                 break;
             default:
-                throw new SemanticException( "unrecognized field: " + unit );
-        }
-        return pattern.toString();
+                throw new IllegalArgumentException( "Unrecognized field: " + unit );        }
+                        return pattern.toString();
     }
 
     private void extractField(
@@ -468,21 +437,17 @@ public class SQLiteDialect extends Dialect {
 
     @Override
     public String trimPattern(TrimSpec specification, boolean isWhitespace) {
-        switch ( specification ) {
-            case BOTH:
-                return isWhitespace
-                        ? "trim(?1)"
-                        : "trim(?1,?2)";
-            case LEADING:
-                return isWhitespace
-                        ? "ltrim(?1)"
-                        : "ltrim(?1,?2)";
-            case TRAILING:
-                return isWhitespace
-                        ? "rtrim(?1)"
-                        : "rtrim(?1,?2)";
-        }
-        throw new UnsupportedOperationException( "Unsupported specification: " + specification );
+        return switch (specification) {
+            case BOTH -> isWhitespace
+                    ? "trim(?1)"
+                    : "trim(?1,?2)";
+            case LEADING -> isWhitespace
+                    ? "ltrim(?1)"
+                    : "ltrim(?1,?2)";
+            case TRAILING -> isWhitespace
+                    ? "rtrim(?1)"
+                    : "rtrim(?1,?2)";
+        };
     }
 
     protected boolean supportsMathFunctions() {
@@ -573,7 +538,7 @@ public class SQLiteDialect extends Dialect {
             new TemplatedViolatedConstraintNameExtractor( sqle -> {
                 final int errorCode = JdbcExceptionHelper.extractErrorCode( sqle );
                 if (errorCode == SQLITE_CONSTRAINT) {
-                    return extractUsingTemplate( "constraint ", " failed", sqle.getMessage() );
+                    return Objects.requireNonNull(extractUsingTemplate("constraint ", " failed", sqle.getMessage()));
                 }
                 return null;
             } );
@@ -582,21 +547,17 @@ public class SQLiteDialect extends Dialect {
     public SQLExceptionConversionDelegate buildSQLExceptionConversionDelegate() {
         return (sqlException, message, sql) -> {
             final int errorCode = JdbcExceptionHelper.extractErrorCode( sqlException );
-            switch ( errorCode ) {
-                case SQLITE_TOOBIG:
-                case SQLITE_MISMATCH:
-                    return new DataException( message, sqlException, sql );
-                case SQLITE_BUSY:
-                case SQLITE_LOCKED:
-                    return new LockAcquisitionException( message, sqlException, sql );
-                case SQLITE_NOTADB:
-                    return new JDBCConnectionException( message, sqlException, sql );
-                default:
-                    if ( errorCode >= SQLITE_IOERR && errorCode <= SQLITE_PROTOCOL ) {
-                        return new JDBCConnectionException( message, sqlException, sql );
+            return switch (errorCode) {
+                case SQLITE_TOOBIG, SQLITE_MISMATCH -> new DataException(message, sqlException, sql);
+                case SQLITE_BUSY, SQLITE_LOCKED -> new LockAcquisitionException(message, sqlException, sql);
+                case SQLITE_NOTADB -> new JDBCConnectionException(message, sqlException, sql);
+                default -> {
+                    if (errorCode >= SQLITE_IOERR && errorCode <= SQLITE_PROTOCOL) {
+                        yield new JDBCConnectionException(message, sqlException, sql);
                     }
-                    return null;
-            }
+                    yield null;
+                }
+            };
         };
     }
 
@@ -819,7 +780,7 @@ public class SQLiteDialect extends Dialect {
                 break;
             case TIME:
                 appender.appendSql( "time(" );
-                appendAsTime( appender, date );
+                DateTimeUtils.appendAsLocalTime(appender, date);
                 appender.appendSql( ')' );
                 break;
             case TIMESTAMP:
@@ -846,7 +807,7 @@ public class SQLiteDialect extends Dialect {
                 break;
             case TIME:
                 appender.appendSql( "time(" );
-                appendAsTime( appender, calendar );
+                DateTimeUtils.appendAsLocalTime(appender, calendar);
                 appender.appendSql( ')' );
                 break;
             case TIMESTAMP:
