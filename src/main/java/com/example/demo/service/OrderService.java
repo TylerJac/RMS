@@ -11,6 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +29,7 @@ public class OrderService {
 
     @Autowired
     private MenuItemRepository menuItemRepository;
+
     /**
      * Retrieves all orders from the database.
      *
@@ -59,21 +61,26 @@ public class OrderService {
     public Order placeOrder(Order order) {
         order.setStatus("Waiting");
 
+        // Create a new list to hold the items that pass the inventory check
+        List<OrderItem> availableItems = new ArrayList<>();
+
         // Check if all items in the order are available in sufficient quantity
         for (OrderItem item : order.getOrderItems()) {
-            if (!inventoryService.isItemAvailable(item.getItemName(), item.getQuantity())) {
+            if (inventoryService.isItemAvailable(item.getItemName(), item.getQuantity())) {
+                availableItems.add(item);
+            } else {
                 // Handle insufficient inventory (could throw an exception or return a specific response)
                 throw new IllegalStateException("Insufficient inventory for item: " + item.getItemName());
             }
         }
 
         double totalPrice = 0.0;
-        for (OrderItem item : order.getOrderItems()) {
+        for (OrderItem item : availableItems) {
             double itemPrice = calculateItemPrice(item);
             item.setPrice(itemPrice);
             totalPrice += itemPrice * item.getQuantity();
 
-            //Update inventory quantities based on the items ordered
+            // Update inventory quantities based on the items ordered
             inventoryService.updateItemQuantity(item.getItemName(), item.getQuantity());
             inventoryService.alertIfLow(item.getItemName());
         }
@@ -110,7 +117,7 @@ public class OrderService {
     }
 
     /**
-     * Calculate item price by fetching data from menu... reconfigure when available
+     * Calculate item price by fetching data from menu.
      *
      */
     private double calculateItemPrice(OrderItem item) {

@@ -36,6 +36,12 @@ public class OrderItem {
     @Column(nullable = false)
     private double price;
 
+    public OrderItem(String itemName) {
+        this.itemName = itemName;
+    }
 
+    public OrderItem() {
+
+    }
 }
 
