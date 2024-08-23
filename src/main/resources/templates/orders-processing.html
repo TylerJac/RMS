@@ -55,7 +55,7 @@
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({
-          items: $('#orderItems').val().split(','),
+          orderItems: $('#orderItems').val().split(','),
           totalPrice: $('#totalPrice').val(),
           status: $('#status').val()
         }),
