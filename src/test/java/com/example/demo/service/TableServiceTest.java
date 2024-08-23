@@ -39,7 +39,7 @@ public class TableServiceTest {
         when(tableRepository.findAll()).thenReturn(tables);
 
         // Act
-        List<RestaurantTable> result = TableService.getAllTables();
+        List<RestaurantTable> result = tableService.getAllTables();
 
         // Assert
         assertEquals(2, result.size());

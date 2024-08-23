@@ -22,7 +22,7 @@ public class TableController {
     }
     @GetMapping
     public String showTableManagement(Model model) {
-        List<RestaurantTable> RestaurantTables = TableService.getAllTables();
+        List<RestaurantTable> RestaurantTables = tableService.getAllTables();
         model.addAttribute("RestaurantTables", RestaurantTables);
         return "table-management";
     }

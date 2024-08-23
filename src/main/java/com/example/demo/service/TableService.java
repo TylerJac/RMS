@@ -18,7 +18,7 @@ public class TableService {
         TableService.tableRepository = tableRepository;
     }
 
-    public static List<RestaurantTable> getAllTables() {
+    public  List<RestaurantTable> getAllTables() {
         return tableRepository.findAll();
     }
 
