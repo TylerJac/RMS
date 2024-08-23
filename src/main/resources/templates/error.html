@@ -7,7 +7,12 @@
   <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
-<h2>Error</h2>
-<p>An error has occurred. Please try again later.</p>
+<div class="error-container">
+  <h2>Error</h2>
+  <p>An error has occurred. Please try again later.</p>
+  <p>If the problem persists, contact support.</p>
+  <button onclick="window.history.back()">Go Back</button>
+  <a href="/">Return to Home</a>
+</div>
 </body>
 </html>
