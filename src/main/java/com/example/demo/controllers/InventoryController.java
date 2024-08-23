@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
  * REST controller for managing inventory items.
  */
 @Controller
-@RequestMapping("/inventory-management")
+@RequestMapping("/api/inventory-management")
 public class InventoryController {
 
     @Autowired

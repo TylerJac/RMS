@@ -20,7 +20,7 @@
     <a href="/table-management">Table Management</a>
 </li>
 <li th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-    <a href="/inventory-management">Inventory Management</a>
+    <a href="/api/inventory-management">Inventory Management</a>
 </li>
 <li th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
     <a href="/sales-report">Sales Report</a>
