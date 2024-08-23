@@ -18,7 +18,14 @@ public class MenuController {
     // Get all menu items
     @GetMapping
     public List<MenuItem> getAllMenuItems() {
+        menuService.loadMenuItems();
         return menuService.getAllMenuItems();
+    }
+
+    // Get a specific menu item by name
+    @GetMapping("/{itemName}")
+    public MenuItem getMenuItem(@PathVariable String itemName) {
+        return menuService.getMenuItem(itemName);
     }
 
     // Add a new menu item using MenuItemDTO
@@ -33,7 +40,7 @@ public class MenuController {
     }
 
     // Edit a menu item by name using MenuItemDTO
-    @PutMapping("/{itemName}")
+    @PostMapping("/{itemName}")
     public MenuItem editMenuItem(@PathVariable String itemName, @RequestBody MenuItemDTO updatedItemDTO) {
         MenuItem updatedItem = new MenuItem(updatedItemDTO.getItemName(),
                 updatedItemDTO.getItemDescription(),

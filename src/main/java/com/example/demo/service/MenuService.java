@@ -38,6 +38,13 @@ public class MenuService {
         return menuItems;
     }
 
+    public MenuItem getMenuItem(String itemName) {
+        return menuItems.stream()
+                .filter(item -> item.getItemName().equalsIgnoreCase(itemName))
+                .findFirst()
+                .orElse(null);
+    }
+
     public MenuItem addMenuItem(MenuItem menuItem) {
         menuItems.add(menuItem);
         saveMenuItems();

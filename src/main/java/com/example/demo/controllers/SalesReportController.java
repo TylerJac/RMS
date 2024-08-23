@@ -38,13 +38,8 @@ public class SalesReportController {
     @GetMapping("/export")
     public String exportDailySalesReport(Model model) {
         SalesReport report = salesReportService.generateDailySalesReport();
-        try {
-            salesReportService.exportReportToFile(report, "daily_sales_report.txt");
-            model.addAttribute("message", "Sales report exported successfully.");
-            return "redirect:/api/sales-report/view?success=true"; // Redirect to view page with success message
-        } catch (IOException e) {
-            model.addAttribute("error", "Failed to export sales report due to an internal error.");
-            return "redirect:/api/sales-report/view?error=true"; // Redirect to view page with error message
-        }
+        salesReportService.exportReportToFile(report, "daily_sales_report.txt");
+        model.addAttribute("message", "Sales report exported successfully.");
+        return "redirect:/api/sales-report/view?success=true"; // Redirect to view page with success message
     }
 }

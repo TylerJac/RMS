@@ -56,5 +56,11 @@ public class Order {
         this.status = newStatus;
         this.modifiedDate = LocalDateTime.now();
     }
+
+    public Collection<Object> getItem() {
+        return Collections.singleton(orderItems);
+    }
+
+
 }
 

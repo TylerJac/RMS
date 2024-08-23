@@ -7,7 +7,6 @@
   <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
-<h2>Sales Report</h2>
 
 <div th:if="${salesReport != null}">
   <!-- Display sales report details -->
@@ -31,7 +30,8 @@
 </div>
 
 <div th:if="${salesReport == null}">
-  <p>No sales report data is available for today.</p>
+  <h1>Reports</h1>
+  <a href="/api/sales-report/view" class="report-link">View Sales Report</a>
 </div>
 
 </body>
