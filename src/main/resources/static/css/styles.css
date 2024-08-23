@@ -173,3 +173,84 @@ a:hover {
     text-decoration: underline;
 }
 
+/* Container for the menu management page */
+.menu-management-container {
+    text-align: center;
+    padding: 30px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    width: 100%;
+    margin: 20px auto;
+}
+
+/* Table styling for menu items */
+#menuTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#menuTable th, #menuTable td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+#menuTable th {
+    background-color: #007bff;
+    color: white;
+}
+
+#menuTable td button {
+    background-color: #5cb85c;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#menuTable td button:hover {
+    background-color: #4cae4c;
+}
+
+/* Form styling for adding menu items */
+#addItemForm {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#addItemForm label {
+    text-align: left;
+    margin-top: 10px;
+}
+
+#addItemForm input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+#addItemForm button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 150px;
+    align-self: center;
+}
+
+#addItemForm button:hover {
+    background-color: #0056b3;
+}
+
+
