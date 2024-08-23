@@ -7,24 +7,26 @@
   <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
-<h2>Menu Management</h2>
-<form action="#" th:action="@{/menu/add}" method="post">
-  <label for="itemName">Item Name:</label>
-  <input type="text" id="itemName" name="itemName">
-  <br>
-  <label for="itemDescription">Item Description:</label>
-  <input type="text" id="itemDescription" name="itemDescription">
-  <br>
-  <label for="preparationTime">Preparation Time:</label>
-  <input type="text" id="preparationTime" name="preparationTime">
-  <br>
-  <label for="itemPrice">Item Price:</label>
-  <input type="text" id="itemPrice" name="itemPrice">
-  <br>
-  <label for="ingredientsList">Ingredients List:</label>
-  <input type="text" id="ingredientsList" name="ingredientsList">
-  <br>
-  <input type="submit" value="Add Item">
-</form>
+<div class="management-container">
+  <h2>Menu Management</h2>
+  <form class="management-form" th:action="@{/menu/add}" method="post">
+    <label for="itemName">Item Name:</label>
+    <input type="text" id="itemName" name="itemName" required>
+    <br>
+    <label for="itemDescription">Item Description:</label>
+    <input type="text" id="itemDescription" name="itemDescription" required>
+    <br>
+    <label for="preparationTime">Preparation Time:</label>
+    <input type="text" id="preparationTime" name="preparationTime" required>
+    <br>
+    <label for="itemPrice">Item Price:</label>
+    <input type="text" id="itemPrice" name="itemPrice" required>
+    <br>
+    <label for="ingredientsList">Ingredients List:</label>
+    <input type="text" id="ingredientsList" name="ingredientsList" required>
+    <br>
+    <input type="submit" value="Add Item">
+  </form>
+</div>
 </body>
 </html>

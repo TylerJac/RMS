@@ -7,26 +7,16 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
-<h2>Dashboard</h2>
-<ul>
-    <!-- Menu Management - Accessible to STAFF and ADMIN -->
-    <li th:if="${#authorization.expression('hasRole(''STAFF'') or hasRole(''ADMIN'')')}">
-    <a href="/menu-management">Menu Management</a>
-</li>
-<li th:if="${#authorization.expression('hasRole(''STAFF'')')}">
-    <a href="/orders-processing">Order Processing</a>
-</li>
-<li th:if="${#authorization.expression('hasRole(''STAFF'')')}">
-    <a href="/table-management">Table Management</a>
-</li>
-<li th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-    <a href="/api/inventory-management">Inventory Management</a>
-</li>
-<li th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-    <a href="/sales-report">Sales Report</a>
-</li>
-    <!-- Logout - Accessible to all authenticated users -->
-    <li><a href="/logout">Logout</a></li>
-</ul>
+<div class="dashboard-container">
+    <h2>Dashboard</h2>
+    <div class="dashboard-buttons">
+        <button th:if="${#authorization.expression('hasRole(''STAFF'') or hasRole(''ADMIN'')')}" onclick="location.href='/menu-management'">Menu Management</button>
+        <button th:if="${#authorization.expression('hasRole(''STAFF'')')}" onclick="location.href='/orders-processing'">Order Processing</button>
+        <button th:if="${#authorization.expression('hasRole(''STAFF'')')}" onclick="location.href='/table-management'">Table Management</button>
+        <button th:if="${#authorization.expression('hasRole(''ADMIN'')')}" onclick="location.href='/api/inventory-management'">Inventory Management</button>
+        <button th:if="${#authorization.expression('hasRole(''ADMIN'')')}" onclick="location.href='/sales-report'">Sales Report</button>
+        <button onclick="location.href='/logout'">Logout</button>
+    </div>
+</div>
 </body>
 </html>

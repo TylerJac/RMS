@@ -8,34 +8,37 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
-<h2>Order Processing</h2>
-<p>Here you can process customer orders...</p>
+<div class="management-container">
+  <h2>Order Processing</h2>
+  <p>Here you can process customer orders...</p>
 
-<!-- Form to create a new order -->
-<form id="newOrderForm">
-  <input type="text" id="orderItems" placeholder="Enter items separated by comma" required>
-  <input type="text" id="totalPrice" placeholder="Total Price" required>
-  <input type="text" id="status" placeholder="Order Status" required>
-  <button type="submit">Place Order</button>
-</form>
+  <form id="newOrderForm" class="management-form">
+    <input type="text" id="orderItems" placeholder="Enter items separated by comma" required>
+    <input type="text" id="totalPrice" placeholder="Total Price" required>
+    <input type="text" id="status" placeholder="Order Status" required>
+    <button type="submit">Place Order</button>
+  </form>
 
-<!-- Table to display orders -->
-<table id="ordersTable">
-  <thead>
-  <tr>
-    <th>Order ID</th>
-    <th>Date</th>
-    <th>Items</th>
-    <th>Total Price</th>
-    <th>Status</th>
-    <th>Actions</th>
-  </tr>
-  </thead>
-  <tbody>
-  <!-- Data filled by JS -->
-  </tbody>
-</table>
+  <table id="ordersTable" class="management-table">
+    <thead>
+    <tr>
+      <th>Order ID</th>
+      <th>Date</th>
+      <th>Items</th>
+      <th>Total Price</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Data filled by JS -->
+    </tbody>
+  </table>
 
+  <footer>
+    <p>Thank you for using our restaurant management app!</p>
+  </footer>
+</div>
 <script>
   $(document).ready(function() {
     fetchOrders();
@@ -74,9 +77,5 @@
     // Additional functions for updateStatus and deleteOrder as needed
   });
 </script>
-
-<footer>
-  <p>Thank you for using our restaurant management app!</p>
-</footer>
 </body>
 </html>

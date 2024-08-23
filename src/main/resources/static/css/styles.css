@@ -4,6 +4,10 @@ body {
     margin: 0;
     padding: 0;
     color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 h1, h2 {
@@ -19,19 +23,27 @@ label {
     margin-top: 10px;
 }
 
-input[type="text"], input[type="password"] {
+input[type="text"], input[type="password"], input[type="number"], select {
     width: 100%;
     padding: 8px;
     margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
 }
 
-input[type="submit"] {
+input[type="submit"], button {
     margin-top: 20px;
     padding: 10px 15px;
     background-color: #5cb85c;
     border: none;
     color: white;
     cursor: pointer;
+    border-radius: 5px;
+}
+
+input[type="submit"]:hover, button:hover {
+    background-color: #4cae4c;
 }
 
 a {
@@ -42,3 +54,122 @@ a {
 a:hover {
     text-decoration: underline;
 }
+
+.loginbox, .loginerror, .registerbox, .dashboard-container, .management-container {
+    text-align: center;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    width: 100%;
+    margin: 20px auto;
+}
+
+.dashboard-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.dashboard-buttons button {
+    padding: 15px;
+    background-color: #007bff;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.dashboard-buttons button:hover {
+    background-color: #0056b3;
+}
+
+.management-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.management-table th, .management-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.management-form {
+    margin-top: 20px;
+}
+
+.management-form input[type="text"], .management-form input[type="number"], .management-form select {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.management-form button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #5cb85c;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.management-form button:hover {
+    background-color: #4cae4c;
+}
+
+/* Styling for the error page container */
+.error-container {
+    text-align: center;
+    padding: 30px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
+    margin: 20px auto;
+}
+
+.error-container h2 {
+    color: #d9534f; /* Bootstrap danger color for error emphasis */
+}
+
+.error-container p {
+    margin: 10px 0;
+}
+
+.error-container button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #5bc0de;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.error-container button:hover {
+    background-color: #31b0d5;
+}
+
+.error-container a {
+    display: block;
+    margin-top: 15px;
+    color: #5bc0de;
+    text-decoration: none;
+}
+
+.error-container a:hover {
+    text-decoration: underline;
+}
+

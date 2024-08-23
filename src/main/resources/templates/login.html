@@ -7,15 +7,28 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
+<div class = loginerror>
 <h2>Login</h2>
-<form action="#" th:action="@{/login}" method="post">
+
+<!-- Display error message if login failed or user doesn't exist -->
+<div th:if="${param.error}" style="color: red;">
+    Invalid username or password, or the user does not exist. Please try again or register a new account.
+</div>
+
+<form th:action="@{/login}" method="post">
     <label for="username">Username:</label>
-    <input type="text" id="username" name="username">
+    <input type="text" id="username" name="username" required>
     <br>
     <label for="password">Password:</label>
-    <input type="password" id="password" name="password">
+    <input type="password" id="password" name="password" required>
     <br>
     <input type="submit" value="Login">
 </form>
+
+<!-- Register button for new users -->
+    <div>
+    <p>Don't have an account? <a href="/register">Register here</a></p>
+    </div>
+</div>
 </body>
 </html>
