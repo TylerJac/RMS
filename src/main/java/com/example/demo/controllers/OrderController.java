@@ -56,7 +56,7 @@ public class OrderController {
      * @param status New status of the order.
      * @return ResponseEntity containing the updated order or a 404 status if not found.
      */
-    @PutMapping("/{id}/status")
+    @PostMapping("/{id}/status")
     public ResponseEntity<Order> updateOrderStatus(@PathVariable Long id, @RequestBody String status) {
         Order updatedOrder = orderService.updateOrderStatus(id, status);
         return updatedOrder != null ? new ResponseEntity<>(updatedOrder, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);

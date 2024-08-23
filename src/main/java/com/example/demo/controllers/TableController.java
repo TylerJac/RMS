@@ -1,9 +1,11 @@
 package com.example.demo.controllers;
 
+import com.example.demo.model.InventoryItem;
 import com.example.demo.model.RestaurantTable;
 import com.example.demo.service.TableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,11 +20,17 @@ public class TableController {
     public TableController(TableService tableService) {
         this.tableService = tableService;
     }
-
     @GetMapping
-    public List<RestaurantTable> getAllTables() {
-        return tableService.getAllTables();
+    public String showTableManagement(Model model) {
+        List<RestaurantTable> RestaurantTables = TableService.getAllTables();
+        model.addAttribute("RestaurantTables", RestaurantTables);
+        return "table-management";
     }
+
+//    @GetMapping
+//    public List<RestaurantTable> getAllTables() {
+//        return TableService.getAllTables();
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<RestaurantTable> getTableById(@PathVariable Long id) {

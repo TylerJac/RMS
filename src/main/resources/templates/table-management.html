@@ -11,7 +11,7 @@
 <p>Manage the status and assignments of tables...</p>
 
 <!-- Table list -->
-<table border="1">
+<table>
     <thead>
     <tr>
         <th>Table ID</th>
@@ -22,18 +22,20 @@
     </thead>
     <tbody>
     <!-- Iterate through tables -->
-    <tr th:each="table : ${tables}">
+    <tr th:each="table : ${RestaurantTables}">
         <td th:text="${table.id}">1</td>
         <td th:text="${table.size}">4</td>
         <td th:text="${table.status}">AVAILABLE</td>
         <td>
             <form th:action="@{/tables/{id}(id=${table.id})}" method="post">
                 <input type="hidden" name="_method" value="patch"/>
-                <select name="status">
-                    <option th:value="AVAILABLE" th:selected="${table.status == T(com.example.demo.model.RestaurantTable.TableStatus).AVAILABLE}">Available</option>
-                    <option th:value="RESERVED" th:selected="${table.status == T(com.example.demo.model.RestaurantTable.TableStatus).RESERVED}">Reserved</option>
-                    <option th:value="OCCUPIED" th:selected="${table.status == T(com.example.demo.model.RestaurantTable.TableStatus).OCCUPIED}">Occupied</option>
-                </select>
+                <label>
+                    <select name="status">
+                        <option th:value="AVAILABLE" th:selected="${table.status == T(com.example.demo.model.RestaurantTable.TableStatus).AVAILABLE}">Available</option>
+                        <option th:value="RESERVED" th:selected="${table.status == T(com.example.demo.model.RestaurantTable.TableStatus).RESERVED}">Reserved</option>
+                        <option th:value="OCCUPIED" th:selected="${table.status == T(com.example.demo.model.RestaurantTable.TableStatus).OCCUPIED}">Occupied</option>
+                    </select>
+                </label>
                 <button type="submit">Update</button>
             </form>
             <form th:action="@{/tables/assign/{id}(id=${table.id})}" method="post" th:if="${table.status == T(com.example.demo.model.RestaurantTable.TableStatus).AVAILABLE}">

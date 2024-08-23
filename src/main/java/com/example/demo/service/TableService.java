@@ -11,14 +11,14 @@ import java.util.List;
 @Service
 public class TableService {
 
-    private final TableRepository tableRepository;
+    private static TableRepository tableRepository;
 
     @Autowired
     public TableService(TableRepository tableRepository) {
-        this.tableRepository = tableRepository;
+        TableService.tableRepository = tableRepository;
     }
 
-    public List<RestaurantTable> getAllTables() {
+    public static List<RestaurantTable> getAllTables() {
         return tableRepository.findAll();
     }
 
